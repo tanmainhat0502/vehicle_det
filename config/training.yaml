@@ -1,5 +1,5 @@
 training:
-  epochs: 30
+  epochs: 20
   mixed_precision: False
   ema: ~
   max_norm: ~
@@ -13,7 +13,7 @@ training:
     overwrite: ~
   scheduler:
     name: cosine_no_sgdr
-    warmup_epochs: 5
+    warmup_epochs: 3
     warmup_bias_lr: 1e-5
     min_lr: 0.00001
-    end_epoch: 25
+    end_epoch: 20
