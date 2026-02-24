@@ -1,0 +1,22 @@
+data:
+  name: traffic_sign_yolo
+  task: detection
+  format: local # local, huggingface
+  path:
+    root: /kaggle/working/vehicle_det/data # dataset root
+    train:
+      image: images/train # directory for training images
+      label: labels/train # directory for training labels
+    valid:
+      image: images/val  # directory for valid images
+      label: labels/val  # directory for valid labels
+    test:
+      image: images/test #images/val
+      label: labels/test #labels/val  # directory for valid labels
+    pattern:
+      image: ~
+      label: ~
+  id_mapping: ['bus', 'car', 'microbus', 'motorbike', 'pickup van', 'truck']  # class names
+  pallete: ~
+
+

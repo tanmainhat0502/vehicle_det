@@ -246,7 +246,7 @@ class DetectionCustomDataset(BaseCustomDataset):
                 logger.warning(f"Error processing annotation {ann_path}: {str(e)}")
                 return []
         num_threads = min(8, len(self.samples))
-        with ThreadPool(num_threads) as pool:
+        with ThreadPool(max(1,num_threads)) as pool:
             all_labels = pool.map(process_annotation, self.samples)
         flat_labels = [label for sublist in all_labels for label in sublist]
         class_counts = dict(Counter(flat_labels))
