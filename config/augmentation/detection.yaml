@@ -2,7 +2,7 @@ augmentation:
   train:
     - 
       name: resize
-      size: [640, 640]
+      size: [960, 960]
       interpolation: bilinear
       max_size: ~
       resize_criteria: ~
@@ -16,7 +16,7 @@ augmentation:
   inference:
     - 
       name: resize
-      size: [640, 640]
+      size: [960, 960]
       interpolation: bilinear
       max_size: ~
       resize_criteria: ~
