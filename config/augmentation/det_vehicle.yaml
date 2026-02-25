@@ -20,9 +20,9 @@ augmentation:
       mosaic_off_duration: 15
 
     - name: hsvjitter
-      hgain: 0.015
-      sgain: 0.7
-      vgain: 0.4
+      h_mag: 5
+      s_mag: 30
+      v_mag: 30
       p: 1.0
 
     - name: randomhorizontalflip
