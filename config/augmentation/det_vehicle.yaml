@@ -25,6 +25,8 @@ augmentation:
 
     - name: randomzoomout
       p: 0.1
+      fill: 0
+      side_range: [1.0, 1.5]
 
     - name: randomioucrop
       p: 0.2
