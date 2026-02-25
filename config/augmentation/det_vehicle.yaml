@@ -37,6 +37,7 @@ augmentation:
     -
       name: mosaicdetection
       prob: 1.0
+      img_size: 960
 
     -
       name: mixing
