@@ -42,6 +42,7 @@ augmentation:
       size: [960, 960]
       interpolation: bilinear
       max_size: ~
+      resize_criteria: ~
 
     - name: totensor
       pixel_range: 1.0
