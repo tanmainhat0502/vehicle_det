@@ -11,8 +11,8 @@ data:
       image: images/val  # directory for valid images
       label: labels/val  # directory for valid labels
     test:
-      image: images/test #images/val
-      label: labels/test #labels/val  # directory for valid labels
+      image: images/val #images/val
+      label: labels/val #labels/val  # directory for valid labels
     pattern:
       image: ~
       label: ~

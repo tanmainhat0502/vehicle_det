@@ -14,5 +14,5 @@ logging:
     validation_epoch: &validation_epoch 10
     save_checkpoint_epoch: *validation_epoch  # Multiplier of `validation_epoch`.
   metrics:
-    classwise_analysis: False
+    classwise_analysis: True
     metric_names: ~ # None for default settings
