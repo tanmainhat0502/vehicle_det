@@ -4,6 +4,7 @@ augmentation:
       size: [960, 960]
       interpolation: bilinear
       max_size: ~
+      resize_criteria: long
 
     - name: randomhorizontalflip
       p: 0.5
@@ -12,13 +13,15 @@ augmentation:
       p: 0.0
 
     - name: hsvjitter
-      hgain: 0.015
-      sgain: 0.7
-      vgain: 0.4
-      p: 1.0
+      h_mag: 5
+      s_mag: 30
+      v_mag: 30
 
     - name: randomresize
-      scale_range: [0.9, 1.1]
+      base_size: [960,960]
+      stride: 32
+      random_range: 5
+      interpolation: bilinear
 
     - name: randomzoomout
       p: 0.1
@@ -27,7 +30,9 @@ augmentation:
       p: 0.2
 
     - name: mosaicdetection
-      p: 1.0
+      mosaic_prob: 1.0
+      size: [960,960]
+      fill: 0
 
     - name: totensor
       pixel_range: 1.0
@@ -36,14 +41,12 @@ augmentation:
       mean: [0.485, 0.456, 0.406]
       std: [0.229, 0.224, 0.225]
 
-    - name: mixing
-      p: 0.15
-
   inference:
     - name: resize
       size: [960, 960]
       interpolation: bilinear
       max_size: ~
+      resize_criteria: long
 
     - name: totensor
       pixel_range: 1.0
