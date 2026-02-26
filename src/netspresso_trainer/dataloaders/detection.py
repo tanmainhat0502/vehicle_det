@@ -39,6 +39,96 @@ class DetectionSampleLoader(BaseSampleLoader):
     def __init__(self, conf_data, train_valid_split_ratio):
         super(DetectionSampleLoader, self).__init__(conf_data, train_valid_split_ratio)
 
+    # def load_data(self, split='train'):
+    #     assert split in ['train', 'valid', 'test'], f"split should be either {['train', 'valid', 'test']}."
+    #     data_root = Path(self.conf_data.path.root)
+    #     split_dir = self.conf_data.path[split]
+    #     image_dir: Path = data_root / split_dir.image
+    #     annotation_dir: Optional[Path] = data_root / split_dir.label if split_dir.label is not None else None
+    #     images: List[str] = []
+    #     labels: List[str] = []
+    #     images_and_targets: List[Dict[str, str]] = []
+    #     if annotation_dir is not None:
+    #         for ext in IMG_EXTENSIONS:
+    #             for file in chain(image_dir.glob(f'*{ext}'), image_dir.glob(f'*{ext.upper()}')):
+    #                 ann_path_maybe = annotation_dir / file.with_suffix('.txt').name
+    #                 if not ann_path_maybe.exists():
+    #                     continue
+    #                 images.append(str(file))
+    #                 labels.append(str(ann_path_maybe))
+    #             # TODO: get paired data from regex pattern matching (self.conf_data.path.pattern)
+
+    #         images = sorted(images, key=lambda k: natural_key(k))
+    #         labels = sorted(labels, key=lambda k: natural_key(k))
+    #         images_and_targets.extend([{'image': str(image), 'label': str(label), 'name': Path(image).name} for image, label in zip(images, labels)])
+
+    #     else:
+    #         for ext in IMG_EXTENSIONS:
+    #             images_and_targets.extend([{'image': str(file), 'label': None, 'name': Path(file).name}
+    #                                     for file in chain(image_dir.glob(f'*{ext}'), image_dir.glob(f'*{ext.upper()}'))])
+    #         images_and_targets = sorted(images_and_targets, key=lambda k: natural_key(k['image']))
+
+    #     # ===== Rare class dynamic balancing =====
+
+    #     RARE_CLASS_IDS = [4, 6]  # engine, tricycle
+
+    #     label_cache = {}
+    #     class_counter = Counter()
+
+    #     # ---- Pass 1: count class frequency ----
+    #     for sample in images_and_targets:
+    #         lbl = sample["label"]
+    #         if not lbl:
+    #             continue
+
+    #         if lbl not in label_cache:
+    #             try:
+    #                 label, _ = get_detection_label(Path(lbl))
+    #                 label = np.array(label).reshape(-1).astype(int).tolist()
+    #             except:
+    #                 label = []
+    #             label_cache[lbl] = label
+    #         else:
+    #             label = label_cache[lbl]
+
+    #         class_counter.update(label)
+
+    #     if len(class_counter) == 0:
+    #         return images_and_targets
+
+    #     max_count = max(class_counter.values())
+
+    #     # ---- Pass 2: oversample rare images ----
+    #     balanced = []
+
+    #     for sample in images_and_targets:
+    #         balanced.append(sample)
+
+    #         lbl = sample["label"]
+    #         if not lbl:
+    #             continue
+
+    #         label = label_cache[lbl]
+    #         rare_classes = [c for c in label if c in RARE_CLASS_IDS]
+
+    #         if not rare_classes:
+    #             continue
+
+    #         # compute dynamic factor
+    #         min_class = min(rare_classes, key=lambda c: class_counter[c])
+    #         factor = max_count // (class_counter[min_class] + 1)
+
+    #         factor = min(factor, 20)  # cap tránh explode dataset
+
+    #         for _ in range(factor):
+    #             balanced.append(sample.copy())
+
+    #     # ---- shuffle to avoid duplicate adjacency ----
+    #     import random
+    #     random.shuffle(balanced)
+
+    #     return balanced
+
     def load_data(self, split='train'):
         assert split in ['train', 'valid', 'test'], f"split should be either {['train', 'valid', 'test']}."
         data_root = Path(self.conf_data.path.root)
@@ -68,67 +158,7 @@ class DetectionSampleLoader(BaseSampleLoader):
                                         for file in chain(image_dir.glob(f'*{ext}'), image_dir.glob(f'*{ext.upper()}'))])
             images_and_targets = sorted(images_and_targets, key=lambda k: natural_key(k['image']))
 
-        # ===== Rare class dynamic balancing =====
-
-        RARE_CLASS_IDS = [4, 6]  # engine, tricycle
-
-        label_cache = {}
-        class_counter = Counter()
-
-        # ---- Pass 1: count class frequency ----
-        for sample in images_and_targets:
-            lbl = sample["label"]
-            if not lbl:
-                continue
-
-            if lbl not in label_cache:
-                try:
-                    label, _ = get_detection_label(Path(lbl))
-                    label = np.array(label).reshape(-1).astype(int).tolist()
-                except:
-                    label = []
-                label_cache[lbl] = label
-            else:
-                label = label_cache[lbl]
-
-            class_counter.update(label)
-
-        if len(class_counter) == 0:
-            return images_and_targets
-
-        max_count = max(class_counter.values())
-
-        # ---- Pass 2: oversample rare images ----
-        balanced = []
-
-        for sample in images_and_targets:
-            balanced.append(sample)
-
-            lbl = sample["label"]
-            if not lbl:
-                continue
-
-            label = label_cache[lbl]
-            rare_classes = [c for c in label if c in RARE_CLASS_IDS]
-
-            if not rare_classes:
-                continue
-
-            # compute dynamic factor
-            min_class = min(rare_classes, key=lambda c: class_counter[c])
-            factor = max_count // (class_counter[min_class] + 1)
-
-            factor = min(factor, 20)  # cap tránh explode dataset
-
-            for _ in range(factor):
-                balanced.append(sample.copy())
-
-        # ---- shuffle to avoid duplicate adjacency ----
-        import random
-        random.shuffle(balanced)
-
-        return balanced
-
+        return images_and_targets
 
     def load_id_mapping(self):
         root_path = Path(self.conf_data.path.root)
