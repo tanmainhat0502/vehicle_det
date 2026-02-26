@@ -68,7 +68,66 @@ class DetectionSampleLoader(BaseSampleLoader):
                                         for file in chain(image_dir.glob(f'*{ext}'), image_dir.glob(f'*{ext.upper()}'))])
             images_and_targets = sorted(images_and_targets, key=lambda k: natural_key(k['image']))
 
-        return images_and_targets
+        # ===== Rare class dynamic balancing =====
+
+        RARE_CLASS_IDS = [4, 6]  # engine, tricycle
+
+        label_cache = {}
+        class_counter = Counter()
+
+        # ---- Pass 1: count class frequency ----
+        for sample in images_and_targets:
+            lbl = sample["label"]
+            if not lbl:
+                continue
+
+            if lbl not in label_cache:
+                try:
+                    label, _ = get_detection_label(Path(lbl))
+                    label = label.tolist() if hasattr(label, "tolist") else [int(label)]
+                except:
+                    label = []
+                label_cache[lbl] = label
+            else:
+                label = label_cache[lbl]
+
+            class_counter.update(label)
+
+        if len(class_counter) == 0:
+            return images_and_targets
+
+        max_count = max(class_counter.values())
+
+        # ---- Pass 2: oversample rare images ----
+        balanced = []
+
+        for sample in images_and_targets:
+            balanced.append(sample)
+
+            lbl = sample["label"]
+            if not lbl:
+                continue
+
+            label = label_cache[lbl]
+            rare_classes = [c for c in label if c in RARE_CLASS_IDS]
+
+            if not rare_classes:
+                continue
+
+            # compute dynamic factor
+            min_class = min(rare_classes, key=lambda c: class_counter[c])
+            factor = max_count // (class_counter[min_class] + 1)
+
+            factor = min(factor, 20)  # cap tránh explode dataset
+
+            for _ in range(factor):
+                balanced.append(sample.copy())
+
+        # ---- shuffle to avoid duplicate adjacency ----
+        import random
+        random.shuffle(balanced)
+
+        return balanced
 
     def load_id_mapping(self):
         root_path = Path(self.conf_data.path.root)
