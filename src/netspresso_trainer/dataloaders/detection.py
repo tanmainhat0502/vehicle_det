@@ -231,12 +231,7 @@ class DetectionCustomDataset(BaseCustomDataset):
         # Remove
         mask = np.minimum(out['bbox'][:, 2] - out['bbox'][:, 0], out['bbox'][:, 3] - out['bbox'][:, 1]) > 1
         
-        #Debug
-        if 7 in label:
-            widths = out['bbox'][:,2] - out['bbox'][:,0]
-            heights = out['bbox'][:,3] - out['bbox'][:,1]
-            sizes = torch.minimum(widths, heights)
-            print("min size:", torch.min(sizes))
+      
         
         out['bbox'] = out['bbox'][mask]
         out['label'] = torch.as_tensor(out['label'].ravel(), dtype=torch.int64)
