@@ -129,6 +129,7 @@ class DetectionSampleLoader(BaseSampleLoader):
 
         return balanced
 
+
     def load_id_mapping(self):
         root_path = Path(self.conf_data.path.root)
 
@@ -229,6 +230,13 @@ class DetectionCustomDataset(BaseCustomDataset):
         out = self.transform(image=img, label=label, bbox=boxes, dataset=self)
         # Remove
         mask = np.minimum(out['bbox'][:, 2] - out['bbox'][:, 0], out['bbox'][:, 3] - out['bbox'][:, 1]) > 1
+        
+        #Debug
+        if 7 in label:
+            widths = out['bbox'][:,2] - out['bbox'][:,0]
+            heights = out['bbox'][:,3] - out['bbox'][:,1]
+            print("min size:", np.min(np.minimum(widths, heights)))
+        
         out['bbox'] = out['bbox'][mask]
         out['label'] = torch.as_tensor(out['label'].ravel(), dtype=torch.int64)
         out['label'] = out['label'][mask]
