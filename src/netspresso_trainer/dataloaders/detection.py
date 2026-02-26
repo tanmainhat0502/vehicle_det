@@ -84,7 +84,7 @@ class DetectionSampleLoader(BaseSampleLoader):
             if lbl not in label_cache:
                 try:
                     label, _ = get_detection_label(Path(lbl))
-                    label = label.tolist() if hasattr(label, "tolist") else [int(label)]
+                    label = np.array(label).reshape(-1).astype(int).tolist()
                 except:
                     label = []
                 label_cache[lbl] = label
