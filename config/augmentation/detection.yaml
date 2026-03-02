@@ -18,7 +18,6 @@ augmentation:
       size: 640
       interpolation: bilinear
       max_size: 640
-      max_size: ~
       resize_criteria: long
 
     - name: pad
