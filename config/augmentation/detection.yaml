@@ -3,7 +3,6 @@ augmentation:
     - name: resize
       size: 960
       interpolation: bilinear
-      max_size: 960
       resize_criteria: long
 
     - name: pad
@@ -21,7 +20,6 @@ augmentation:
     - name: resize
       size: 960
       interpolation: bilinear
-      max_size: 960
       resize_criteria: long
 
     - name: pad
